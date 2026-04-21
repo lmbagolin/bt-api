@@ -1,0 +1,110 @@
+{
+  "mcpServers": {
+    "documentation": {
+      "description": "Generate and manage project documentation",
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-everything"]
+    },
+    "filesystem": {
+      "description": "Access project files and directory structure",
+      "enabled": true
+    }
+  },
+  "projectConfig": {
+    "name": "Beach Tennis Tournament System",
+    "type": "full-stack",
+    "backend": {
+      "framework": "Laravel 13",
+      "language": "PHP 8.3",
+      "orm": "Eloquent",
+      "auth": "Sanctum",
+      "database": "MySQL 8",
+      "paths": {
+        "root": "/var/www/api",
+        "controllers": "app/Http/Controllers",
+        "models": "app/Models",
+        "services": "app/Services",
+        "migrations": "database/migrations",
+        "tests": "tests/Feature"
+      }
+    },
+    "frontend": {
+      "framework": "Quasar 2",
+      "language": "JavaScript/Vue 3",
+      "stateManagement": "Pinia",
+      "ui": "Tailwind CSS v4",
+      "paths": {
+        "root": "/var/www/spa",
+        "components": "src/components",
+        "stores": "src/stores",
+        "composables": "src/composables",
+        "pages": "src/pages",
+        "styles": "src/css"
+      }
+    },
+    "docker": {
+      "enabled": true,
+      "dockerComposeDir": "/home/leonel/www/beach-tennis/bt-docker",
+      "mainContainer": "bt-workspace-1",
+      "services": ["workspace", "nginx", "mysql", "redis", "php-fpm"]
+    },
+    "supportedTools": [
+      "docker-compose",
+      "composer",
+      "npm",
+      "php artisan",
+      "git",
+      "mysql-cli"
+    ]
+  },
+  "skillsConfig": {
+    "prioritizedSkills": [
+      "api-patterns",
+      "database-design",
+      "testing-patterns",
+      "docker-expert",
+      "deployment-procedures",
+      "web-design-guidelines",
+      "react-best-practices",
+      "code-review-checklist",
+      "vulnerability-scanner"
+    ],
+    "skipSkills": [
+      "game-development",
+      "mobile-design",
+      "seo-fundamentals",
+      "nestjs-expert",
+      "prisma-expert",
+      "python-patterns",
+      "red-team-tactics",
+      "powershell-windows"
+    ]
+  },
+  "agentsConfig": {
+    "prioritizedAgents": [
+      "backend-specialist",
+      "frontend-specialist",
+      "database-architect",
+      "devops-engineer",
+      "test-engineer",
+      "debugger",
+      "security-auditor",
+      "performance-optimizer",
+      "code-archaeologist",
+      "qa-automation-engineer"
+    ],
+    "skipAgents": [
+      "game-developer",
+      "mobile-developer",
+      "seo-specialist",
+      "penetration-tester",
+      "product-manager",
+      "product-owner"
+    ]
+  },
+  "commandDefaults": {
+    "docker": "docker exec bt-workspace-1 bash -c",
+    "backendPath": "/var/www/api",
+    "frontendPath": "/var/www/spa"
+  }
+}

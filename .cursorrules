@@ -1,0 +1,36 @@
+---
+description: Regras para agentes de IA trabalharem no FLUX de forma autônoma
+globs:
+alwaysApply: true
+---
+
+# BEACH TENNIS PLATFORM - Regras para Agentes de IA
+
+## 🚨 REGRA CRÍTICA - BANCO DE DADOS
+
+> **⛔ NUNCA execute comandos que possam APAGAR ou ALTERAR dados do banco de dados.**
+
+Isso inclui: `migrate:fresh`, `migrate:reset`, `db:wipe`, `DELETE FROM`, `TRUNCATE`, `DROP TABLE/DATABASE`.
+
+**Esta regra é INEGOCIÁVEL e deve ser seguida em TODAS as circunstâncias.**
+
+---
+
+## 🎯 Propósito desta Documentação
+
+Este projeto possui **documentação estruturada para agentes de IA** que permite trabalhar com **mínima instrução do usuário**.
+
+A documentação existe para que você:
+
+- Se contextualize sobre bugs, melhorias ou novas features
+- Identifique fluxos e arquivos relevantes automaticamente
+- Entenda padrões e convenções sem precisar perguntar
+- Resolva tarefas de forma autônoma e eficiente
+
+## ⚡ Workflow Obrigatório
+
+### ANTES de qualquer tarefa:
+
+1. **Leia `AGENTS.md`** na raiz do projeto para entender a arquitetura
+2. **Leia a doc específica** antes de investigar o código
+3. **Só então** comece a implementar/corrigir
