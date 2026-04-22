@@ -17,9 +17,11 @@ class StoreLeagueStageRequest extends FormRequest
         return [
             'league_id' => ['required', 'exists:leagues,id'],
             'data_etapa' => ['required', 'date'],
+            'data_abertura_inscricoes' => ['nullable', 'date'],
             'valor_inscricao' => ['required', 'integer', 'min:0'],
             'tipo' => ['required', 'string', 'max:255'],
             'jogadores_por_grupo' => ['required', 'integer', 'min:1'],
+            'vagas' => ['nullable', 'integer', 'min:1'],
             'classificam_total' => ['nullable', 'integer', Rule::in([4, 8, 12, 16])],
             'disputa_3_lugar' => ['required', 'boolean'],
             'pontuacao_1' => ['required', 'integer', 'min:0'],

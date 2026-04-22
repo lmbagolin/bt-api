@@ -24,6 +24,7 @@ class PlayerResource extends JsonResource
             'whatsapp'  => $this->whatsapp,
             'instagram' => $this->instagram,
             'image_url' => $this->image?->url,
+            'player_status' => $this->whenPivotLoaded('league_stage_players', fn () => $this->pivot->player_status),
             'arenas'    => ArenaResource::collection($this->whenLoaded('arenas')),
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,

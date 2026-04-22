@@ -19,6 +19,11 @@ class LeagueResource extends JsonResource
             'descricao'              => $this->descricao,
             'premiacao'              => $this->premiacao,
             'nivel'                  => $this->nivel,
+            'arena'                  => $this->whenLoaded('arena', fn () => [
+                'id'   => $this->arena->id,
+                'name' => $this->arena->name,
+                'city' => $this->arena->city,
+            ]),
             'stages'                 => $this->whenLoaded('stages', fn () => LeagueStageResource::collection($this->stages)),
             'created_at'             => $this->created_at,
             'updated_at'             => $this->updated_at,

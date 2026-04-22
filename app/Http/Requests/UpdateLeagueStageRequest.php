@@ -17,9 +17,11 @@ class UpdateLeagueStageRequest extends FormRequest
         return [
             'league_id' => ['sometimes', 'exists:leagues,id'],
             'data_etapa' => ['sometimes', 'date'],
+            'data_abertura_inscricoes' => ['nullable', 'date'],
             'valor_inscricao' => ['sometimes', 'integer', 'min:0'],
             'tipo' => ['sometimes', 'string', 'max:255'],
             'jogadores_por_grupo' => ['sometimes', 'integer', 'min:1'],
+            'vagas' => ['nullable', 'integer', 'min:1'],
             'classificam_total' => ['nullable', 'integer', Rule::in([4, 8, 12, 16])],
             'disputa_3_lugar' => ['sometimes', 'boolean'],
             'pontuacao_1' => ['sometimes', 'integer', 'min:0'],

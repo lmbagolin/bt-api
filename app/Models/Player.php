@@ -2,10 +2,16 @@
 
 namespace App\Models;
 
+use Database\Factories\PlayerFactory;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Player extends Model
 {
+    /** @use HasFactory<PlayerFactory> */
+    use HasFactory;
+
     protected $fillable = [
         'name',
         'nickname',
@@ -36,5 +42,12 @@ class Player extends Model
     public function participants()
     {
         return $this->hasMany(Participant::class);
+    }
+
+    public function leagueStages(): BelongsToMany
+    {
+        return $this->belongsToMany(LeagueStage::class, 'league_stage_players')
+            ->withPivot('player_status')
+            ->withTimestamps();
     }
 }

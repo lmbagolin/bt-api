@@ -8,16 +8,39 @@ use App\Http\Resources\LeagueResource;
 use App\Models\Arena;
 use App\Models\League;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
 class LeagueController extends Controller
 {
+    public function publicShow(League $league): LeagueResource
+    {
+        $league->load(['arena:id,name,city', 'stages']);
+        return new LeagueResource($league);
+    }
+
+    public function open(Request $request): \Illuminate\Http\Resources\Json\AnonymousResourceCollection
+    {
+        $leagues = League::with(['arena', 'stages'])
+            ->where(function ($q) {
+                $q->whereNull('data_prevista_termino')
+                  ->orWhereDate('data_prevista_termino', '>=', now());
+            })
+            ->when($request->search, fn ($q, $v) => $q->where('nome', 'like', "%{$v}%"))
+            ->when($request->nivel,  fn ($q, $v) => $q->where('nivel', $v))
+            ->when($request->city,   fn ($q, $v) => $q->whereHas('arena', fn ($a) => $a->where('city', 'like', "%{$v}%")))
+            ->latest()
+            ->get();
+
+        return LeagueResource::collection($leagues);
+    }
+
     public function index(Arena $arena): \Illuminate\Http\Resources\Json\AnonymousResourceCollection
     {
         $leagues = $arena->leagues()->with('stages')->get();
         return LeagueResource::collection($leagues);
     }
 
-    public function store(StoreLeagueRequest $request, Arena $arena): LeagueResource
+    public function store(StoreLeagueRequest $request, Arena $arena): LeagueResource|JsonResponse
     {
         if ($arena->owner_id !== auth()->id()) {
             return response()->json(['message' => 'Acesso negado.'], 403);
@@ -33,7 +56,7 @@ class LeagueController extends Controller
         return new LeagueResource($league);
     }
 
-    public function update(UpdateLeagueRequest $request, Arena $arena, League $league): LeagueResource
+    public function update(UpdateLeagueRequest $request, Arena $arena, League $league): LeagueResource|JsonResponse
     {
         if ($league->arena->owner_id !== auth()->id()) {
             return response()->json(['message' => 'Acesso negado.'], 403);

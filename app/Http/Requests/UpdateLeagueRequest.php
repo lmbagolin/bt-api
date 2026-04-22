@@ -16,7 +16,7 @@ class UpdateLeagueRequest extends FormRequest
         return [
             'nome' => ['sometimes', 'string', 'max:255'],
             'data_inicio' => ['sometimes', 'date'],
-            'data_prevista_termino' => ['sometimes', 'date', 'after:data_inicio'],
+            'data_prevista_termino' => ['nullable', 'date', 'after:data_inicio'],
             'numero_etapas' => ['sometimes', 'integer', 'min:1'],
             'descricao' => ['nullable', 'string'],
             'premiacao' => ['nullable', 'string'],
