@@ -19,7 +19,7 @@ class UpdateLeagueStageRequest extends FormRequest
             'data_etapa' => ['sometimes', 'date'],
             'data_abertura_inscricoes' => ['nullable', 'date'],
             'valor_inscricao' => ['sometimes', 'integer', 'min:0'],
-            'tipo' => ['sometimes', 'string', 'max:255'],
+            'tipo' => ['sometimes', Rule::in(['rei-da-praia', 'dupla-fixa', 'simples'])],
             'jogadores_por_grupo' => ['sometimes', 'integer', 'min:1'],
             'vagas' => ['nullable', 'integer', 'min:1'],
             'classificam_total' => ['nullable', 'integer', Rule::in([4, 8, 12, 16])],

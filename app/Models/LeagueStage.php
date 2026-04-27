@@ -29,10 +29,11 @@ class LeagueStage extends Model
         'sorteio_playoffs',
         'confrontos_playoffs',
         'sorteio_grupos',
+        'stage_status',
     ];
 
     protected $casts = [
-        'data_etapa' => 'date',
+        'data_etapa' => 'datetime',
         'data_abertura_inscricoes' => 'date',
         'disputa_3_lugar' => 'boolean',
     ];
@@ -52,5 +53,30 @@ class LeagueStage extends Model
         return $this->belongsToMany(Player::class, 'league_stage_players')
             ->withPivot('player_status')
             ->withTimestamps();
+    }
+
+    public function groups(): HasMany
+    {
+        return $this->hasMany(LeagueStageGroup::class, 'league_stage_id')->orderBy('letter');
+    }
+
+    public function finalists(): HasMany
+    {
+        return $this->hasMany(LeagueStageFinalist::class, 'league_stage_id');
+    }
+
+    public function playoffPairs(): HasMany
+    {
+        return $this->hasMany(LeagueStagePlayoffPair::class, 'league_stage_id')->orderBy('pair_rank');
+    }
+
+    public function playoffMatches(): HasMany
+    {
+        return $this->hasMany(LeagueStagePlayoffMatch::class, 'league_stage_id');
+    }
+
+    public function rankings(): HasMany
+    {
+        return $this->hasMany(LeagueStageRanking::class, 'league_stage_id')->orderBy('position');
     }
 }

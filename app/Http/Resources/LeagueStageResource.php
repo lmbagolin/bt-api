@@ -13,7 +13,7 @@ class LeagueStageResource extends JsonResource
         return [
             'id'                          => $this->id,
             'league_id'                   => $this->league_id,
-            'data_etapa'                  => $this->data_etapa,
+            'data_etapa'                  => $this->data_etapa?->format('Y-m-d H:i'),
             'data_abertura_inscricoes'    => $this->data_abertura_inscricoes,
             'valor_inscricao'             => $this->valor_inscricao,
             'tipo'                       => $this->tipo,
@@ -31,6 +31,7 @@ class LeagueStageResource extends JsonResource
             'sorteio_playoffs'           => $this->sorteio_playoffs,
             'confrontos_playoffs'        => $this->confrontos_playoffs,
             'sorteio_grupos'             => $this->sorteio_grupos,
+            'stage_status'               => $this->stage_status,
             'players'                    => PlayerResource::collection($this->whenLoaded('players')),
             'created_at'                 => $this->created_at,
             'updated_at'                 => $this->updated_at,

@@ -20,14 +20,15 @@ class LeagueController extends Controller
 
     public function open(Request $request): \Illuminate\Http\Resources\Json\AnonymousResourceCollection
     {
-        $leagues = League::with(['arena', 'stages'])
+        $leagues = League::with(['arena.logo', 'stages'])
             ->where(function ($q) {
                 $q->whereNull('data_prevista_termino')
                   ->orWhereDate('data_prevista_termino', '>=', now());
             })
-            ->when($request->search, fn ($q, $v) => $q->where('nome', 'like', "%{$v}%"))
-            ->when($request->nivel,  fn ($q, $v) => $q->where('nivel', $v))
-            ->when($request->city,   fn ($q, $v) => $q->whereHas('arena', fn ($a) => $a->where('city', 'like', "%{$v}%")))
+            ->when($request->search,  fn ($q, $v) => $q->where('nome', 'like', "%{$v}%"))
+            ->when($request->nivel,   fn ($q, $v) => $q->where('nivel', $v))
+            ->when($request->genero,  fn ($q, $v) => $q->where('genero', $v))
+            ->when($request->city,    fn ($q, $v) => $q->whereHas('arena', fn ($a) => $a->where('city', 'like', "%{$v}%")))
             ->latest()
             ->get();
 
@@ -36,7 +37,7 @@ class LeagueController extends Controller
 
     public function index(Arena $arena): \Illuminate\Http\Resources\Json\AnonymousResourceCollection
     {
-        $leagues = $arena->leagues()->with('stages')->get();
+        $leagues = $arena->leagues()->with(['stages.registrations'])->get();
         return LeagueResource::collection($leagues);
     }
 

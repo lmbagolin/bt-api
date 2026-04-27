@@ -64,4 +64,15 @@ class AuthController extends Controller
     {
         return new UserResource($request->user());
     }
+
+    public function updateLocale(Request $request)
+    {
+        $request->validate([
+            'locale' => ['required', 'string', 'in:pt_br,es'],
+        ]);
+
+        $request->user()->update(['locale' => $request->locale]);
+
+        return response()->json(['locale' => $request->locale]);
+    }
 }

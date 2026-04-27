@@ -20,7 +20,8 @@ class StoreLeagueRequest extends FormRequest
             'numero_etapas' => ['required', 'integer', 'min:1'],
             'descricao' => ['nullable', 'string'],
             'premiacao' => ['nullable', 'string'],
-            'nivel' => ['required', 'string', 'max:255'],
+            'nivel'  => ['required', 'string', 'max:255'],
+            'genero' => ['required', 'in:masculino,feminino,misto'],
         ];
     }
 }

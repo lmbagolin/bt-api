@@ -9,6 +9,11 @@ use App\Http\Controllers\LeagueController;
 use App\Http\Controllers\LeagueStageController;
 use App\Http\Controllers\LeagueStagePlayerController;
 use App\Http\Controllers\LeagueStageRegistrationController;
+use App\Http\Controllers\LeagueStageGroupController;
+use App\Http\Controllers\LeagueStageFinalistController;
+use App\Http\Controllers\LeagueStagePlayoffController;
+use App\Http\Controllers\LeagueStageRankingController;
+use App\Http\Controllers\LeagueRankingController;
 
 use App\Http\Controllers\ArenaDashboardController;
 use App\Http\Controllers\ArenaPlayerController;
@@ -21,6 +26,7 @@ Route::post('/reset-password', [PasswordResetController::class, 'resetPassword']
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/user', [AuthController::class, 'user']);
+    Route::patch('/user/locale', [AuthController::class, 'updateLocale']);
 
     // Player Global Profile
     Route::get('/player/profile', [PlayerProfileController::class, 'show']);
@@ -45,7 +51,9 @@ Route::middleware('auth:sanctum')->group(function () {
     // Leagues — rotas públicas (antes do apiResource para não conflitar)
     Route::get('leagues/open', [LeagueController::class, 'open']);
     Route::get('leagues/{league}', [LeagueController::class, 'publicShow']);
+    Route::get('leagues/{league}/ranking', [LeagueRankingController::class, 'publicIndex']);
     Route::post('leagues/{league}/stages/{stage}/register', [LeagueStageRegistrationController::class, 'selfRegister']);
+    Route::get('leagues/{league}/stages/{stage}/registrations', [LeagueStageRegistrationController::class, 'publicIndex']);
 
     // Leagues — admin (nested under arenas)
     Route::apiResource('arenas.leagues', LeagueController::class);
@@ -67,5 +75,35 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('stages/{stage}/players', [LeagueStagePlayerController::class, 'store']);
     Route::patch('stages/{stage}/players/{player}/confirm', [LeagueStagePlayerController::class, 'confirm']);
     Route::delete('stages/{stage}/players/{player}', [LeagueStagePlayerController::class, 'destroy']);
+
+    // League Stage Groups & Matches
+    Route::get('arenas/{arena}/leagues/{league}/stages/{stage}/groups', [LeagueStageGroupController::class, 'index']);
+    Route::post('arenas/{arena}/leagues/{league}/stages/{stage}/groups/draw', [LeagueStageGroupController::class, 'draw']);
+    Route::delete('arenas/{arena}/leagues/{league}/stages/{stage}/groups', [LeagueStageGroupController::class, 'reset']);
+    Route::patch(
+        'arenas/{arena}/leagues/{league}/stages/{stage}/groups/{group}/matches/{match}',
+        [LeagueStageGroupController::class, 'updateMatchScore']
+    );
+
+    // League Stage Finalists
+    Route::get('arenas/{arena}/leagues/{league}/stages/{stage}/finalists', [LeagueStageFinalistController::class, 'index']);
+    Route::post('arenas/{arena}/leagues/{league}/stages/{stage}/finalists', [LeagueStageFinalistController::class, 'store']);
+    Route::delete('arenas/{arena}/leagues/{league}/stages/{stage}/finalists', [LeagueStageFinalistController::class, 'destroy']);
+
+    // League Stage Playoffs — Pairs
+    Route::get('arenas/{arena}/leagues/{league}/stages/{stage}/playoffs/pairs', [LeagueStagePlayoffController::class, 'indexPairs']);
+    Route::post('arenas/{arena}/leagues/{league}/stages/{stage}/playoffs/pairs', [LeagueStagePlayoffController::class, 'storePairs']);
+
+    // League Stage Playoffs — Bracket
+    Route::get('arenas/{arena}/leagues/{league}/stages/{stage}/playoffs/matches', [LeagueStagePlayoffController::class, 'indexMatches']);
+    Route::post('arenas/{arena}/leagues/{league}/stages/{stage}/playoffs/matches', [LeagueStagePlayoffController::class, 'storeMatches']);
+    Route::patch('arenas/{arena}/leagues/{league}/stages/{stage}/playoffs/matches/{match}', [LeagueStagePlayoffController::class, 'updateMatch']);
+
+    // League Stage Ranking
+    Route::get('arenas/{arena}/leagues/{league}/stages/{stage}/ranking', [LeagueStageRankingController::class, 'index']);
+    Route::post('arenas/{arena}/leagues/{league}/stages/{stage}/ranking', [LeagueStageRankingController::class, 'store']);
+
+    // League Overall Ranking
+    Route::get('arenas/{arena}/leagues/{league}/ranking', [LeagueRankingController::class, 'index']);
 });
 

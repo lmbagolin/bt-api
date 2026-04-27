@@ -28,14 +28,14 @@ class LeagueStageController extends Controller
         return new LeagueStageResource($stage);
     }
 
-    public function show(Arena $arena, League $league, LeagueStage $stage): LeagueStageResource
+    public function show(LeagueStage $stage): LeagueStageResource
     {
         return new LeagueStageResource($stage);
     }
 
-    public function update(UpdateLeagueStageRequest $request, Arena $arena, League $league, LeagueStage $stage): LeagueStageResource
+    public function update(UpdateLeagueStageRequest $request, LeagueStage $stage): LeagueStageResource
     {
-        if ($league->arena->owner_id !== auth()->id()) {
+        if ($stage->league->arena->owner_id !== auth()->id()) {
             return response()->json(['message' => 'Acesso negado.'], 403);
         }
 
@@ -43,9 +43,9 @@ class LeagueStageController extends Controller
         return new LeagueStageResource($stage);
     }
 
-    public function destroy(Arena $arena, League $league, LeagueStage $stage): JsonResponse
+    public function destroy(LeagueStage $stage): JsonResponse
     {
-        if ($league->arena->owner_id !== auth()->id()) {
+        if ($stage->league->arena->owner_id !== auth()->id()) {
             return response()->json(['message' => 'Acesso negado.'], 403);
         }
 

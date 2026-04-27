@@ -16,6 +16,12 @@ class LeagueStageRegistrationResource extends JsonResource
             'posicao_grupo' => $this->posicao_grupo,
             'observacoes'   => $this->observacoes,
             'player'        => new PlayerResource($this->whenLoaded('player')),
+            'partner'       => $this->whenLoaded('partner', fn () => $this->partner
+                ? new PlayerResource($this->partner)
+                : ($this->partner_name ? ['id' => null, 'name' => $this->partner_name] : null)
+            ),
+            'partner_player_id' => $this->partner_player_id,
+            'partner_name'      => $this->partner_name,
         ];
     }
 }

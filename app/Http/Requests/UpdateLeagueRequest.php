@@ -20,7 +20,8 @@ class UpdateLeagueRequest extends FormRequest
             'numero_etapas' => ['sometimes', 'integer', 'min:1'],
             'descricao' => ['nullable', 'string'],
             'premiacao' => ['nullable', 'string'],
-            'nivel' => ['sometimes', 'string', 'max:255'],
+            'nivel'  => ['sometimes', 'string', 'max:255'],
+            'genero' => ['sometimes', 'in:masculino,feminino,misto'],
         ];
     }
 }

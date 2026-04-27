@@ -34,3 +34,78 @@ A documentação existe para que você:
 1. **Leia `AGENTS.md`** na raiz do projeto para entender a arquitetura
 2. **Leia a doc específica** antes de investigar o código
 3. **Só então** comece a implementar/corrigir
+
+---
+
+## 🤖 Agentes Disponíveis
+
+Cada agente é um especialista com persona, regras e foco definidos. Leia o arquivo do agente antes de qualquer implementação.
+
+| Agente | Caminho | Quando Usar |
+|--------|---------|-------------|
+| `backend-specialist` | `.agent/agents/backend-specialist.md` | API, Laravel, banco de dados, serviços |
+| `code-archaeologist` | `.agent/agents/code-archaeologist.md` | Explorar e entender código legado |
+| `database-architect` | `.agent/agents/database-architect.md` | Schema, migrations, queries, performance |
+| `debugger` | `.agent/agents/debugger.md` | Investigação sistemática de bugs |
+| `devops-engineer` | `.agent/agents/devops-engineer.md` | Docker, CI/CD, infraestrutura |
+| `documentation-writer` | `.agent/agents/documentation-writer.md` | Criar/atualizar documentação |
+| `explorer-agent` | `.agent/agents/explorer-agent.md` | Survey e mapeamento do codebase |
+| `frontend-specialist` | `.agent/agents/frontend-specialist.md` | UI/UX, Vue, Quasar, componentes |
+| `game-developer` | `.agent/agents/game-developer.md` | Lógica de jogos e gamification |
+| `mobile-developer` | `.agent/agents/mobile-developer.md` | Apps mobile (React Native, Flutter) |
+| `orchestrator` | `.agent/agents/orchestrator.md` | Coordenar múltiplos agentes |
+| `penetration-tester` | `.agent/agents/penetration-tester.md` | Testes de segurança e vulnerabilidades |
+| `performance-optimizer` | `.agent/agents/performance-optimizer.md` | Profiling e otimização de performance |
+| `product-manager` | `.agent/agents/product-manager.md` | Estratégia de produto e roadmap |
+| `product-owner` | `.agent/agents/product-owner.md` | Backlog, priorização, user stories |
+| `project-planner` | `.agent/agents/project-planner.md` | Planejamento 4 fases, sem código |
+| `qa-automation-engineer` | `.agent/agents/qa-automation-engineer.md` | Automação de testes |
+| `security-auditor` | `.agent/agents/security-auditor.md` | Auditoria de segurança, OWASP |
+| `seo-specialist` | `.agent/agents/seo-specialist.md` | SEO, Core Web Vitals, meta tags |
+| `test-engineer` | `.agent/agents/test-engineer.md` | Estratégia e escrita de testes |
+
+---
+
+## 🛠️ Skills Disponíveis
+
+Skills são capacidades especializadas carregadas conforme a necessidade. Leia o `SKILL.md` de cada uma antes de usar.
+
+| Skill | Caminho | Quando Usar |
+|-------|---------|-------------|
+| `api-patterns` | `.agent/skills/api-patterns/SKILL.md` | Design de API, REST, paginação, versionamento |
+| `app-builder` | `.agent/skills/app-builder/SKILL.md` | Construção de aplicações full-stack do zero |
+| `architecture` | `.agent/skills/architecture/SKILL.md` | Decisões arquiteturais, ADRs, trade-offs |
+| `bash-linux` | `.agent/skills/bash-linux/SKILL.md` | Comandos Linux, scripting, piping |
+| `behavioral-modes` | `.agent/skills/behavioral-modes/SKILL.md` | Modos operacionais da IA (debug, ship, review) |
+| `brainstorming` | `.agent/skills/brainstorming/SKILL.md` | Questões socráticas para requisitos complexos |
+| `clean-code` | `.agent/skills/clean-code/SKILL.md` | Padrões de código limpo, sem over-engineering |
+| `code-review-checklist` | `.agent/skills/code-review-checklist/SKILL.md` | Checklist de revisão de código e segurança |
+| `database-design` | `.agent/skills/database-design/SKILL.md` | Schema, índices, ORM, bancos serverless |
+| `deployment-procedures` | `.agent/skills/deployment-procedures/SKILL.md` | Deploy seguro, rollback, verificação |
+| `documentation-templates` | `.agent/skills/documentation-templates/SKILL.md` | Templates de README, API docs, comentários |
+| `frontend-design` | `.agent/skills/frontend-design/SKILL.md` | Design de UI, componentes, layouts, cores |
+| `game-development` | `.agent/skills/game-development/SKILL.md` | Desenvolvimento de jogos, plataformas |
+| `geo-fundamentals` | `.agent/skills/geo-fundamentals/SKILL.md` | GEO para motores de busca com IA |
+| `i18n-localization` | `.agent/skills/i18n-localization/SKILL.md` | Internacionalização, traduções, RTL |
+| `intelligent-routing` | `.agent/skills/intelligent-routing/SKILL.md` | Seleção automática de agentes |
+| `lint-and-validate` | `.agent/skills/lint-and-validate/SKILL.md` | Linting, validação de código |
+| `mcp-builder` | `.agent/skills/mcp-builder/SKILL.md` | Construção de servidores MCP |
+| `mobile-design` | `.agent/skills/mobile-design/SKILL.md` | Design mobile-first, iOS/Android |
+| `nextjs-react-expert` | `.agent/skills/nextjs-react-expert/SKILL.md` | React, Next.js, performance, SSR |
+| `nodejs-best-practices` | `.agent/skills/nodejs-best-practices/SKILL.md` | Node.js, async, segurança, frameworks |
+| `parallel-agents` | `.agent/skills/parallel-agents/SKILL.md` | Orquestração de múltiplos agentes paralelos |
+| `performance-profiling` | `.agent/skills/performance-profiling/SKILL.md` | Profiling, métricas, otimização |
+| `plan-writing` | `.agent/skills/plan-writing/SKILL.md` | Planejamento estruturado de tasks |
+| `powershell-windows` | `.agent/skills/powershell-windows/SKILL.md` | PowerShell, Windows, scripts |
+| `python-patterns` | `.agent/skills/python-patterns/SKILL.md` | Python, async, type hints, estrutura |
+| `red-team-tactics` | `.agent/skills/red-team-tactics/SKILL.md` | MITRE ATT&CK, simulação de ataques |
+| `rust-pro` | `.agent/skills/rust-pro/SKILL.md` | Rust moderno, async, Tokio, axum |
+| `seo-fundamentals` | `.agent/skills/seo-fundamentals/SKILL.md` | SEO, E-E-A-T, Core Web Vitals |
+| `server-management` | `.agent/skills/server-management/SKILL.md` | Gerenciamento de servidores, processos |
+| `systematic-debugging` | `.agent/skills/systematic-debugging/SKILL.md` | Debugging 4-fases, análise de causa raiz |
+| `tailwind-patterns` | `.agent/skills/tailwind-patterns/SKILL.md` | Tailwind CSS v4, design tokens, containers |
+| `tdd-workflow` | `.agent/skills/tdd-workflow/SKILL.md` | TDD, ciclo RED-GREEN-REFACTOR |
+| `testing-patterns` | `.agent/skills/testing-patterns/SKILL.md` | Testes unitários, integração, mocking |
+| `vulnerability-scanner` | `.agent/skills/vulnerability-scanner/SKILL.md` | OWASP 2025, supply chain, superfície de ataque |
+| `web-design-guidelines` | `.agent/skills/web-design-guidelines/SKILL.md` | Revisão de UI, acessibilidade, UX audit |
+| `webapp-testing` | `.agent/skills/webapp-testing/SKILL.md` | E2E, Playwright, testes de aplicação web |
