@@ -27,15 +27,47 @@ Route::get('/cities', [CityController::class, 'index']);
 Route::get('/friends/token/{token}',  [PlayerFriendController::class, 'showByToken']);
 Route::post('/friends/token/{token}', [PlayerFriendController::class, 'acceptByToken']);
 
-Route::post('/register', [AuthController::class, 'register']);
-Route::post('/login', [AuthController::class, 'login']);
-Route::post('/forgot-password', [PasswordResetController::class, 'sendResetLinkEmail']);
-Route::post('/reset-password', [PasswordResetController::class, 'resetPassword']);
+// Verificação de e-mail via link assinado (sem auth:sanctum — vem do e-mail)
+Route::get('/email/verify/{id}/{hash}', function (Illuminate\Http\Request $request, string $id, string $hash) {
+    $user = App\Models\User::findOrFail($id);
+
+    if (! hash_equals($hash, sha1($user->getEmailForVerification()))) {
+        return response()->json(['message' => 'Link de verificação inválido.'], 403);
+    }
+
+    if (! $request->hasValidSignature()) {
+        return response()->json(['message' => 'Link de verificação expirado.'], 410);
+    }
+
+    if (! $user->hasVerifiedEmail()) {
+        $user->markEmailAsVerified();
+        event(new Illuminate\Auth\Events\Verified($user));
+    }
+
+    return response()->json(['message' => 'E-mail verificado com sucesso!']);
+})->middleware('signed')->name('verification.verify');
+
+// Autenticação — rate limit restrito contra brute force
+Route::middleware('throttle:auth')->group(function () {
+    Route::post('/register', [AuthController::class, 'register']);
+    Route::post('/login', [AuthController::class, 'login']);
+    Route::post('/forgot-password', [PasswordResetController::class, 'sendResetLinkEmail']);
+    Route::post('/reset-password', [PasswordResetController::class, 'resetPassword']);
+});
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/user', [AuthController::class, 'user']);
     Route::patch('/user/locale', [AuthController::class, 'updateLocale']);
+
+    // Reenviar e-mail de verificação
+    Route::post('/email/verification-notification', function (Illuminate\Http\Request $request) {
+        if ($request->user()->hasVerifiedEmail()) {
+            return response()->json(['message' => 'E-mail já verificado.'], 422);
+        }
+        $request->user()->sendEmailVerificationNotification();
+        return response()->json(['message' => 'Link de verificação enviado!']);
+    })->middleware('throttle:6,1');
 
     // Amigos
     Route::get('/friends',              [PlayerFriendController::class, 'index']);

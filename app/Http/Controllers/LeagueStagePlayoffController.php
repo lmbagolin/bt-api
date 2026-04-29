@@ -31,9 +31,7 @@ class LeagueStagePlayoffController extends Controller
 
     public function indexPairs(Arena $arena, League $league, LeagueStage $stage): AnonymousResourceCollection|JsonResponse
     {
-        if ($arena->owner_id !== auth()->id()) {
-            return response()->json(['message' => 'Acesso negado.'], 403);
-        }
+        $this->authorizeStage($arena, $league, $stage);
 
         $pairs = $stage->playoffPairs()
             ->with($this->pairEagerLoad())
@@ -45,9 +43,7 @@ class LeagueStagePlayoffController extends Controller
 
     public function storePairs(Request $request, Arena $arena, League $league, LeagueStage $stage): AnonymousResourceCollection|JsonResponse
     {
-        if ($arena->owner_id !== auth()->id()) {
-            return response()->json(['message' => 'Acesso negado.'], 403);
-        }
+        $this->authorizeStage($arena, $league, $stage);
 
         $request->validate([
             'pairs'                  => ['required', 'array', 'min:1'],
@@ -77,9 +73,7 @@ class LeagueStagePlayoffController extends Controller
 
     public function indexMatches(Arena $arena, League $league, LeagueStage $stage): AnonymousResourceCollection|JsonResponse
     {
-        if ($arena->owner_id !== auth()->id()) {
-            return response()->json(['message' => 'Acesso negado.'], 403);
-        }
+        $this->authorizeStage($arena, $league, $stage);
 
         $matches = $stage->playoffMatches()
             ->with([
@@ -95,9 +89,7 @@ class LeagueStagePlayoffController extends Controller
 
     public function storeMatches(Request $request, Arena $arena, League $league, LeagueStage $stage): AnonymousResourceCollection|JsonResponse
     {
-        if ($arena->owner_id !== auth()->id()) {
-            return response()->json(['message' => 'Acesso negado.'], 403);
-        }
+        $this->authorizeStage($arena, $league, $stage);
 
         $request->validate([
             'matches'                  => ['required', 'array'],
@@ -129,9 +121,7 @@ class LeagueStagePlayoffController extends Controller
 
     public function updateMatch(Request $request, Arena $arena, League $league, LeagueStage $stage, LeagueStagePlayoffMatch $match): JsonResponse
     {
-        if ($arena->owner_id !== auth()->id()) {
-            return response()->json(['message' => 'Acesso negado.'], 403);
-        }
+        $this->authorizeStage($arena, $league, $stage);
 
         $request->validate([
             'score_p'        => ['nullable', 'integer', 'min:0'],

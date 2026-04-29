@@ -14,9 +14,7 @@ class LeagueStageRankingController extends Controller
 {
     public function index(Arena $arena, League $league, LeagueStage $stage): AnonymousResourceCollection|JsonResponse
     {
-        if ($arena->owner_id !== auth()->id()) {
-            return response()->json(['message' => 'Acesso negado.'], 403);
-        }
+        $this->authorizeStage($arena, $league, $stage);
 
         $rankings = $stage->rankings()
             ->with(['registration.player', 'registration.partner', 'registration.groupRegistration'])
@@ -32,9 +30,7 @@ class LeagueStageRankingController extends Controller
 
     public function store(Arena $arena, League $league, LeagueStage $stage): AnonymousResourceCollection|JsonResponse
     {
-        if ($arena->owner_id !== auth()->id()) {
-            return response()->json(['message' => 'Acesso negado.'], 403);
-        }
+        $this->authorizeStage($arena, $league, $stage);
 
         // ── 1. Validate final was played ─────────────────────────────────────
         $matches      = $stage->playoffMatches()->get();

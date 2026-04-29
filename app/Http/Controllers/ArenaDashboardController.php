@@ -8,12 +8,14 @@ use Illuminate\Http\JsonResponse;
 
 class ArenaDashboardController extends Controller
 {
-    public function index($arenaId): JsonResponse
+    public function index(Arena $arena): JsonResponse
     {
-        $arena = Arena::with([
+        $this->authorizeArenaOwner($arena);
+
+        $arena->load([
             'leagues.stages.registrations',
             'leagues.stages.groups',
-        ])->findOrFail($arenaId);
+        ]);
 
         $leagues = $arena->leagues;
 

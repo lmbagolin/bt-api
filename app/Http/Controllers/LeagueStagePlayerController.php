@@ -13,6 +13,8 @@ class LeagueStagePlayerController extends Controller
 {
     public function index(LeagueStage $stage): AnonymousResourceCollection
     {
+        $this->authorizeArenaOwner($stage->league->arena);
+
         $players = $stage->players()->get();
         return PlayerResource::collection($players);
     }

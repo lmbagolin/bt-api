@@ -17,9 +17,7 @@ class LeagueStageFinalistController extends Controller
     // -------------------------------------------------------------------------
     public function index(Arena $arena, League $league, LeagueStage $stage): AnonymousResourceCollection|JsonResponse
     {
-        if ($arena->owner_id !== auth()->id()) {
-            return response()->json(['message' => 'Acesso negado.'], 403);
-        }
+        $this->authorizeStage($arena, $league, $stage);
 
         $finalists = $stage->finalists()
             ->with(['registration.player', 'registration.partner', 'group.groupRegistrations'])
@@ -36,9 +34,7 @@ class LeagueStageFinalistController extends Controller
     // -------------------------------------------------------------------------
     public function store(Request $request, Arena $arena, League $league, LeagueStage $stage): AnonymousResourceCollection|JsonResponse
     {
-        if ($arena->owner_id !== auth()->id()) {
-            return response()->json(['message' => 'Acesso negado.'], 403);
-        }
+        $this->authorizeStage($arena, $league, $stage);
 
         $request->validate([
             'finalists'                    => ['required', 'array', 'min:1'],
@@ -77,9 +73,7 @@ class LeagueStageFinalistController extends Controller
     // -------------------------------------------------------------------------
     public function destroy(Arena $arena, League $league, LeagueStage $stage): JsonResponse
     {
-        if ($arena->owner_id !== auth()->id()) {
-            return response()->json(['message' => 'Acesso negado.'], 403);
-        }
+        $this->authorizeStage($arena, $league, $stage);
 
         $stage->finalists()->delete();
 

@@ -25,9 +25,7 @@ class LeagueStageGroupController extends Controller
     // -------------------------------------------------------------------------
     public function index(Arena $arena, League $league, LeagueStage $stage): AnonymousResourceCollection|JsonResponse
     {
-        if ($arena->owner_id !== auth()->id()) {
-            return response()->json(['message' => 'Acesso negado.'], 403);
-        }
+        $this->authorizeStage($arena, $league, $stage);
 
         $groups = $stage->groups()->with([
             'groupRegistrations.registration.player',
@@ -43,9 +41,7 @@ class LeagueStageGroupController extends Controller
     // -------------------------------------------------------------------------
     public function draw(Arena $arena, League $league, LeagueStage $stage): AnonymousResourceCollection|JsonResponse
     {
-        if ($arena->owner_id !== auth()->id()) {
-            return response()->json(['message' => 'Acesso negado.'], 403);
-        }
+        $this->authorizeStage($arena, $league, $stage);
 
         $registrations = $stage->registrations()->with(['player', 'partner'])->get();
         $confirmed     = $registrations->filter(fn ($r) => $r->status === 'confirmed');
@@ -137,9 +133,7 @@ class LeagueStageGroupController extends Controller
     // -------------------------------------------------------------------------
     public function reset(Arena $arena, League $league, LeagueStage $stage): JsonResponse
     {
-        if ($arena->owner_id !== auth()->id()) {
-            return response()->json(['message' => 'Acesso negado.'], 403);
-        }
+        $this->authorizeStage($arena, $league, $stage);
 
         $stage->groups()->delete();
 
@@ -157,9 +151,7 @@ class LeagueStageGroupController extends Controller
         LeagueStageGroup $group,
         LeagueStageMatch $match
     ): JsonResponse {
-        if ($arena->owner_id !== auth()->id()) {
-            return response()->json(['message' => 'Acesso negado.'], 403);
-        }
+        $this->authorizeStage($arena, $league, $stage);
 
         $request->validate([
             'score_p' => ['nullable', 'integer', 'min:0', 'max:99'],

@@ -108,9 +108,7 @@ class LeagueStageRegistrationController extends Controller
 
     public function index(Arena $arena, League $league, LeagueStage $stage): AnonymousResourceCollection|JsonResponse
     {
-        if ($arena->owner_id !== auth()->id()) {
-            return response()->json(['message' => 'Acesso negado.'], 403);
-        }
+        $this->authorizeStage($arena, $league, $stage);
 
         $registrations = $stage->registrations()->with(['player', 'partner'])->orderBy('created_at')->get();
 
@@ -123,9 +121,7 @@ class LeagueStageRegistrationController extends Controller
 
     public function store(Request $request, Arena $arena, League $league, LeagueStage $stage): LeagueStageRegistrationResource|JsonResponse
     {
-        if ($arena->owner_id !== auth()->id()) {
-            return response()->json(['message' => 'Acesso negado.'], 403);
-        }
+        $this->authorizeStage($arena, $league, $stage);
 
         $isDupla = $stage->tipo === 'dupla-fixa';
 
@@ -208,9 +204,7 @@ class LeagueStageRegistrationController extends Controller
 
     public function update(Request $request, Arena $arena, League $league, LeagueStage $stage, LeagueStageRegistration $registration): LeagueStageRegistrationResource|JsonResponse
     {
-        if ($arena->owner_id !== auth()->id()) {
-            return response()->json(['message' => 'Acesso negado.'], 403);
-        }
+        $this->authorizeStage($arena, $league, $stage);
 
         $request->validate([
             'status'        => ['sometimes', Rule::in(['pending', 'confirmed', 'waitlist', 'cancelled'])],
@@ -231,9 +225,7 @@ class LeagueStageRegistrationController extends Controller
 
     public function updateStatus(Request $request, Arena $arena, League $league, LeagueStage $stage, LeagueStageRegistration $registration): LeagueStageRegistrationResource|JsonResponse
     {
-        if ($arena->owner_id !== auth()->id()) {
-            return response()->json(['message' => 'Acesso negado.'], 403);
-        }
+        $this->authorizeStage($arena, $league, $stage);
 
         $request->validate([
             'status' => ['required', Rule::in(['pending', 'confirmed', 'waitlist', 'cancelled'])],
@@ -251,9 +243,7 @@ class LeagueStageRegistrationController extends Controller
 
     public function destroy(Arena $arena, League $league, LeagueStage $stage, LeagueStageRegistration $registration): JsonResponse
     {
-        if ($arena->owner_id !== auth()->id()) {
-            return response()->json(['message' => 'Acesso negado.'], 403);
-        }
+        $this->authorizeStage($arena, $league, $stage);
 
         $registration->delete();
 

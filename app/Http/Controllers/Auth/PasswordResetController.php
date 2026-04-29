@@ -18,13 +18,12 @@ class PasswordResetController extends Controller
      */
     public function sendResetLinkEmail(ForgotPasswordRequest $request): JsonResponse
     {
-        $status = Password::sendResetLink(
-            $request->only('email')
-        );
+        // Sempre retorna 200 independente de o e-mail existir ou não (previne enumeração)
+        Password::sendResetLink($request->only('email'));
 
-        return $status === Password::RESET_LINK_SENT
-            ? response()->json(['message' => __($status)], 200)
-            : response()->json(['message' => __($status)], 422);
+        return response()->json([
+            'message' => 'Se este e-mail estiver cadastrado, você receberá as instruções em breve.',
+        ], 200);
     }
 
     /**

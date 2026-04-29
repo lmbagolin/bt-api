@@ -14,30 +14,32 @@ class LeagueStageController extends Controller
 {
     public function index(Arena $arena, League $league): \Illuminate\Http\Resources\Json\AnonymousResourceCollection
     {
+        $this->authorizeLeague($arena, $league);
+
         $stages = $league->stages;
         return LeagueStageResource::collection($stages);
     }
 
     public function store(StoreLeagueStageRequest $request, Arena $arena, League $league): LeagueStageResource|JsonResponse
     {
-        if ($league->arena->owner_id !== auth()->id()) {
-            return response()->json(['message' => 'Acesso negado.'], 403);
-        }
+        $this->authorizeLeague($arena, $league);
 
         $stage = $league->stages()->create($request->validated());
         return new LeagueStageResource($stage);
     }
 
+    // Rota shallow: GET /stages/{stage} — sem Arena/League na URL
     public function show(LeagueStage $stage): LeagueStageResource
     {
+        $this->authorizeArenaOwner($stage->league->arena);
+
         return new LeagueStageResource($stage);
     }
 
+    // Rota shallow: PUT /stages/{stage} — sem Arena/League na URL
     public function update(UpdateLeagueStageRequest $request, LeagueStage $stage): LeagueStageResource|JsonResponse
     {
-        if ($stage->league->arena->owner_id !== auth()->id()) {
-            return response()->json(['message' => 'Acesso negado.'], 403);
-        }
+        $this->authorizeArenaOwner($stage->league->arena);
 
         $stage->update($request->validated());
         return new LeagueStageResource($stage);
@@ -45,17 +47,7 @@ class LeagueStageController extends Controller
 
     public function destroy(Arena $arena, League $league, LeagueStage $stage): JsonResponse
     {
-        if ($league->arena_id !== $arena->id) {
-            return response()->json(['message' => 'Liga não pertence a esta arena.'], 404);
-        }
-
-        if ($stage->league_id !== $league->id) {
-            return response()->json(['message' => 'Etapa não pertence a esta liga.'], 404);
-        }
-
-        if ($arena->owner_id !== auth()->id()) {
-            return response()->json(['message' => 'Acesso negado.'], 403);
-        }
+        $this->authorizeStage($arena, $league, $stage);
 
         $deletableStatuses = ['created', 'registrations_open'];
         if (! in_array($stage->getRawOriginal('stage_status'), $deletableStatuses)) {
