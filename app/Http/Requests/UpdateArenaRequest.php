@@ -23,8 +23,8 @@ class UpdateArenaRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'sometimes|required|string|max:255',
-            'city' => 'nullable|string|max:255',
+            'name'    => 'sometimes|required|string|max:255',
+            'city_id' => 'nullable|exists:cities,id',
             'logo' => [
                 'nullable',
                 'image',

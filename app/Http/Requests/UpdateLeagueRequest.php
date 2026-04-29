@@ -21,7 +21,7 @@ class UpdateLeagueRequest extends FormRequest
             'descricao' => ['nullable', 'string'],
             'premiacao' => ['nullable', 'string'],
             'nivel'  => ['sometimes', 'string', 'max:255'],
-            'genero' => ['sometimes', 'in:masculino,feminino,misto'],
+            'gender' => ['sometimes', 'in:male,female,mixed'],
         ];
     }
 }

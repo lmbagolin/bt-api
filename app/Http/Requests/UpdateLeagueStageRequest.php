@@ -9,6 +9,9 @@ class UpdateLeagueStageRequest extends FormRequest
 {
     public function authorize(): bool
     {
+        if ($this->stage->league->arena->owner_id !== auth()->id()) {
+            return false;
+        }
         return true;
     }
 
@@ -36,4 +39,5 @@ class UpdateLeagueStageRequest extends FormRequest
             'sorteio_grupos' => ['sometimes', Rule::in(['aleatorio', 'pela_ordem'])],
         ];
     }
+
 }

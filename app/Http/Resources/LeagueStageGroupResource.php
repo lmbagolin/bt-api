@@ -9,17 +9,17 @@ class LeagueStageGroupResource extends JsonResource
 {
     public function toArray(Request $request): array
     {
-        // Build a map: registration_id → { id, name, color }
+        // Build a map: player_id → { id, name, color }
         $playersMap = $this->groupRegistrations->mapWithKeys(function ($gr) {
-            $reg         = $gr->registration;
-            $name        = $reg?->player?->name ?? 'Jogador';
-            $partnerName = $reg?->partner?->name ?? $reg?->partner_name;
+            $player      = $gr->registration?->player;
+            $partnerName = $gr->registration?->partner?->name ?? $gr->registration?->partner_name;
 
-            return [$gr->registration_id => [
-                'id'           => $gr->registration_id,
-                'name'         => $name,
-                'partner_name' => $partnerName,
-                'color'        => $gr->color,
+            return [$player?->id => [
+                'id'              => $player?->id,
+                'registration_id' => $gr->registration_id,
+                'name'            => $player?->name ?? 'Jogador',
+                'partner_name'    => $partnerName,
+                'color'           => $gr->color,
             ]];
         });
 
@@ -27,13 +27,13 @@ class LeagueStageGroupResource extends JsonResource
             return [
                 'id'           => $match->id,
                 'match_number' => $match->match_number,
-                'p'            => array_values(array_filter([
-                    $playersMap[$match->p1_registration_id] ?? null,
-                    $playersMap[$match->p2_registration_id] ?? null,
+                'd1'           => array_values(array_filter([
+                    $playersMap[$match->d1_player1_id] ?? null,
+                    $playersMap[$match->d1_player2_id] ?? null,
                 ])),
-                'q'            => array_values(array_filter([
-                    $playersMap[$match->q1_registration_id] ?? null,
-                    $playersMap[$match->q2_registration_id] ?? null,
+                'd2'           => array_values(array_filter([
+                    $playersMap[$match->d2_player1_id] ?? null,
+                    $playersMap[$match->d2_player2_id] ?? null,
                 ])),
                 'score_p'      => $match->score_p,
                 'score_q'      => $match->score_q,

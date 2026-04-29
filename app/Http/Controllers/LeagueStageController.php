@@ -18,7 +18,7 @@ class LeagueStageController extends Controller
         return LeagueStageResource::collection($stages);
     }
 
-    public function store(StoreLeagueStageRequest $request, Arena $arena, League $league): LeagueStageResource
+    public function store(StoreLeagueStageRequest $request, Arena $arena, League $league): LeagueStageResource|JsonResponse
     {
         if ($league->arena->owner_id !== auth()->id()) {
             return response()->json(['message' => 'Acesso negado.'], 403);
@@ -33,7 +33,7 @@ class LeagueStageController extends Controller
         return new LeagueStageResource($stage);
     }
 
-    public function update(UpdateLeagueStageRequest $request, LeagueStage $stage): LeagueStageResource
+    public function update(UpdateLeagueStageRequest $request, LeagueStage $stage): LeagueStageResource|JsonResponse
     {
         if ($stage->league->arena->owner_id !== auth()->id()) {
             return response()->json(['message' => 'Acesso negado.'], 403);
@@ -43,13 +43,29 @@ class LeagueStageController extends Controller
         return new LeagueStageResource($stage);
     }
 
-    public function destroy(LeagueStage $stage): JsonResponse
+    public function destroy(Arena $arena, League $league, LeagueStage $stage): JsonResponse
     {
-        if ($stage->league->arena->owner_id !== auth()->id()) {
+        if ($league->arena_id !== $arena->id) {
+            return response()->json(['message' => 'Liga não pertence a esta arena.'], 404);
+        }
+
+        if ($stage->league_id !== $league->id) {
+            return response()->json(['message' => 'Etapa não pertence a esta liga.'], 404);
+        }
+
+        if ($arena->owner_id !== auth()->id()) {
             return response()->json(['message' => 'Acesso negado.'], 403);
         }
 
+        $deletableStatuses = ['created', 'registrations_open'];
+        if (! in_array($stage->getRawOriginal('stage_status'), $deletableStatuses)) {
+            return response()->json([
+                'message' => 'Não é possível excluir uma etapa que já foi iniciada.',
+            ], 422);
+        }
+
         $stage->delete();
+
         return response()->json(status: 204);
     }
 }

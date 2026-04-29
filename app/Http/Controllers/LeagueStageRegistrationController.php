@@ -28,9 +28,9 @@ class LeagueStageRegistrationController extends Controller
             return response()->json(['message' => 'Perfil de jogador não encontrado. Preencha seus dados antes de se inscrever.'], 422);
         }
 
-        if (!$this->isGenderAllowed($league->genero, $player->gender)) {
-            $generoLabel = ['masculino' => 'Masculino', 'feminino' => 'Feminino'][$league->genero] ?? $league->genero;
-            return response()->json(['message' => "Esta liga é exclusiva para o gênero {$generoLabel}. Seu perfil não corresponde ao gênero da liga."], 422);
+        if (!$this->isGenderAllowed($league->gender, $player->gender)) {
+            $label = ['male' => 'Masculino', 'female' => 'Feminino'][$league->gender] ?? $league->gender;
+            return response()->json(['message' => "Esta liga é exclusiva para o gênero {$label}. Seu perfil não corresponde ao gênero da liga."], 422);
         }
 
         if ($stage->registrations()->where('player_id', $player->id)->exists()) {
@@ -42,20 +42,32 @@ class LeagueStageRegistrationController extends Controller
 
         if ($isDupla) {
             $request->validate([
-                'partner_player_id' => ['nullable', 'exists:players,id'],
-                'partner_name'      => ['required_without:partner_player_id', 'nullable', 'string', 'max:255'],
+                'partner_player_id' => ['required', 'exists:players,id'],
             ]);
 
-            if ($request->partner_player_id) {
-                $partner = Player::find($request->partner_player_id);
-                if (!$this->isGenderAllowed($league->genero, $partner?->gender)) {
-                    $generoLabel = ['masculino' => 'Masculino', 'feminino' => 'Feminino'][$league->genero] ?? $league->genero;
-                    return response()->json(['message' => "O parceiro não corresponde ao gênero {$generoLabel} da liga."], 422);
-                }
-                $partnerPlayerId = $partner->id;
-            } else {
-                $partnerName = $request->partner_name;
+            $partner = Player::find($request->partner_player_id);
+
+            if ($partner->id === $player->id) {
+                return response()->json(['message' => 'Você não pode se inscrever consigo mesmo como parceiro.'], 422);
             }
+
+            $areFriends = \App\Models\PlayerFriend::where('status', 'accepted')
+                ->where(fn($q) =>
+                    $q->where('requester_id', $player->id)->where('addressee_id', $partner->id)
+                )->orWhere(fn($q) =>
+                    $q->where('requester_id', $partner->id)->where('addressee_id', $player->id)
+                )->exists();
+
+            if (!$areFriends) {
+                return response()->json(['message' => 'O parceiro precisa ser seu amigo no BT Tournament para se inscrever em dupla.'], 422);
+            }
+
+            if (!$this->isGenderAllowed($league->gender, $partner->gender)) {
+                $label = ['male' => 'Masculino', 'female' => 'Feminino'][$league->gender] ?? $league->gender;
+                return response()->json(['message' => "O parceiro não corresponde ao gênero {$label} da liga."], 422);
+            }
+
+            $partnerPlayerId = $partner->id;
         }
 
         $status = $this->resolveStatus($stage);
@@ -149,9 +161,9 @@ class LeagueStageRegistrationController extends Controller
             }
         }
 
-        if (!$this->isGenderAllowed($league->genero, $player->gender)) {
-            $generoLabel = ['masculino' => 'Masculino', 'feminino' => 'Feminino'][$league->genero] ?? $league->genero;
-            return response()->json(['message' => "Esta liga é exclusiva para o gênero {$generoLabel}. O jogador não corresponde ao gênero da liga."], 422);
+        if (!$this->isGenderAllowed($league->gender, $player->gender)) {
+            $label = ['male' => 'Masculino', 'female' => 'Feminino'][$league->gender] ?? $league->gender;
+            return response()->json(['message' => "Esta liga é exclusiva para o gênero {$label}. O jogador não corresponde ao gênero da liga."], 422);
         }
 
         if ($stage->registrations()->where('player_id', $player->id)->exists()) {
@@ -165,9 +177,9 @@ class LeagueStageRegistrationController extends Controller
         if ($isDupla) {
             if ($request->partner_player_id) {
                 $partner = Player::find($request->partner_player_id);
-                if (!$this->isGenderAllowed($league->genero, $partner?->gender)) {
-                    $generoLabel = ['masculino' => 'Masculino', 'feminino' => 'Feminino'][$league->genero] ?? $league->genero;
-                    return response()->json(['message' => "O parceiro não corresponde ao gênero {$generoLabel} da liga."], 422);
+                if (!$this->isGenderAllowed($league->gender, $partner?->gender)) {
+                    $label = ['male' => 'Masculino', 'female' => 'Feminino'][$league->gender] ?? $league->gender;
+                    return response()->json(['message' => "O parceiro não corresponde ao gênero {$label} da liga."], 422);
                 }
                 $partnerPlayerId = $partner->id;
             } elseif ($request->partner_name) {
@@ -250,12 +262,12 @@ class LeagueStageRegistrationController extends Controller
 
     // -------------------------------------------------------------------------
 
-    private function isGenderAllowed(?string $leagueGenero, ?string $playerGender): bool
+    private function isGenderAllowed(?string $leagueGender, ?string $playerGender): bool
     {
-        return match ($leagueGenero) {
-            'masculino' => $playerGender === 'male',
-            'feminino'  => $playerGender === 'female',
-            default     => true,
+        return match ($leagueGender) {
+            'male'   => $playerGender === 'male',
+            'female' => $playerGender === 'female',
+            default  => true,
         };
     }
 

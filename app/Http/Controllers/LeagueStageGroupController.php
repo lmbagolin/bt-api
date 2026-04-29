@@ -47,7 +47,7 @@ class LeagueStageGroupController extends Controller
             return response()->json(['message' => 'Acesso negado.'], 403);
         }
 
-        $registrations = $stage->registrations()->with('player')->get();
+        $registrations = $stage->registrations()->with(['player', 'partner'])->get();
         $confirmed     = $registrations->filter(fn ($r) => $r->status === 'confirmed');
         $pool          = ($confirmed->count() >= 4 ? $confirmed : $registrations)->values();
 
@@ -87,21 +87,39 @@ class LeagueStageGroupController extends Controller
                 $colorIdx++;
             }
 
-            // Duplas rotativas: 3 jogos para 4 jogadores
-            $matchDefs = [
-                [0, 1, 2, 3],
-                [0, 2, 1, 3],
-                [0, 3, 1, 2],
-            ];
+            if ($stage->tipo === 'dupla-fixa') {
+                // Round-robin completo: cada dupla joga contra todas as outras
+                // C(n,2) jogos — cada lado tem UMA dupla (d1_player2/d2_player2 = null)
+                $n = $gRegs->count();
+                $matchNum = 1;
+                for ($i = 0; $i < $n; $i++) {
+                    for ($j = $i + 1; $j < $n; $j++) {
+                        $group->matches()->create([
+                            'match_number' => $matchNum++,
+                            'd1_player1_id' => $gRegs[$i]->player_id,
+                            'd1_player2_id' => $gRegs[$i]->partner_player_id,
+                            'd2_player1_id' => $gRegs[$j]->player_id,
+                            'd2_player2_id' => $gRegs[$j]->partner_player_id,
+                        ]);
+                    }
+                }
+            } else {
+                // Formato americano: 3 jogos com duplas rotativas para 4 jogadores
+                $matchDefs = [
+                    [0, 1, 2, 3],
+                    [0, 2, 1, 3],
+                    [0, 3, 1, 2],
+                ];
 
-            foreach ($matchDefs as $num => $def) {
-                $group->matches()->create([
-                    'match_number'       => $num + 1,
-                    'p1_registration_id' => $gRegs[$def[0]]->id,
-                    'p2_registration_id' => $gRegs[$def[1]]->id,
-                    'q1_registration_id' => $gRegs[$def[2]]->id,
-                    'q2_registration_id' => $gRegs[$def[3]]->id,
-                ]);
+                foreach ($matchDefs as $num => $def) {
+                    $group->matches()->create([
+                        'match_number'  => $num + 1,
+                        'd1_player1_id' => $gRegs[$def[0]]->player_id,
+                        'd1_player2_id' => $gRegs[$def[1]]->player_id,
+                        'd2_player1_id' => $gRegs[$def[2]]->player_id,
+                        'd2_player2_id' => $gRegs[$def[3]]->player_id,
+                    ]);
+                }
             }
         }
 

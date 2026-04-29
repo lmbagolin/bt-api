@@ -15,9 +15,14 @@ class ArenaResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'id' => $this->id,
-            'name' => $this->name,
-            'city' => $this->city,
+            'id'       => $this->id,
+            'name'     => $this->name,
+            'city_id'  => $this->city_id,
+            'city'     => $this->whenLoaded('city', fn () => [
+                'id'         => $this->city->id,
+                'name'       => $this->city->name,
+                'state_code' => $this->city->state_code,
+            ]),
             'owner_id' => $this->owner_id,
             'logo_url' => $this->logo?->url,
             'created_at' => $this->created_at,

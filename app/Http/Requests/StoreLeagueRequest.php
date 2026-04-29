@@ -21,7 +21,7 @@ class StoreLeagueRequest extends FormRequest
             'descricao' => ['nullable', 'string'],
             'premiacao' => ['nullable', 'string'],
             'nivel'  => ['required', 'string', 'max:255'],
-            'genero' => ['required', 'in:masculino,feminino,misto'],
+            'gender' => ['required', 'in:male,female,mixed'],
         ];
     }
 }

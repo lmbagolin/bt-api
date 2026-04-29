@@ -27,7 +27,7 @@ class LeagueController extends Controller
             })
             ->when($request->search,  fn ($q, $v) => $q->where('nome', 'like', "%{$v}%"))
             ->when($request->nivel,   fn ($q, $v) => $q->where('nivel', $v))
-            ->when($request->genero,  fn ($q, $v) => $q->where('genero', $v))
+            ->when($request->gender,  fn ($q, $v) => $q->where('gender', $v))
             ->when($request->city,    fn ($q, $v) => $q->whereHas('arena', fn ($a) => $a->where('city', 'like', "%{$v}%")))
             ->latest()
             ->get();

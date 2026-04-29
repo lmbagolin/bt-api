@@ -5,6 +5,7 @@ namespace App\Models;
 use Database\Factories\PlayerFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Player extends Model
@@ -17,12 +18,23 @@ class Player extends Model
         'nickname',
         'gender',
         'level',
-        'city',
+        'city_id',
+        'nationality',
         'whatsapp',
         'instagram',
         'user_id',
         'image_id',
     ];
+
+    public function city(): BelongsTo
+    {
+        return $this->belongsTo(City::class, 'city_id');
+    }
+
+    public function country(): BelongsTo
+    {
+        return $this->belongsTo(Country::class, 'nationality', 'iso3');
+    }
 
     public function user()
     {

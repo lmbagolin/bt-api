@@ -19,7 +19,7 @@ class LeagueResource extends JsonResource
             'descricao'              => $this->descricao,
             'premiacao'              => $this->premiacao,
             'nivel'                  => $this->nivel,
-            'genero'                 => $this->genero,
+            'gender'                 => $this->gender,
             'arena'                  => $this->whenLoaded('arena', fn () => [
                 'id'       => $this->arena->id,
                 'name'     => $this->arena->name,

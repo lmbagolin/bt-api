@@ -22,7 +22,7 @@ class LeagueStageFinalistController extends Controller
         }
 
         $finalists = $stage->finalists()
-            ->with(['registration.player', 'group.groupRegistrations'])
+            ->with(['registration.player', 'registration.partner', 'group.groupRegistrations'])
             ->orderBy('group_position')
             ->orderBy('pts', 'desc')
             ->get();
@@ -64,7 +64,7 @@ class LeagueStageFinalistController extends Controller
         }
 
         $finalists = $stage->finalists()
-            ->with(['registration.player', 'group.groupRegistrations'])
+            ->with(['registration.player', 'registration.partner', 'group.groupRegistrations'])
             ->orderBy('group_position')
             ->orderBy('pts', 'desc')
             ->get();

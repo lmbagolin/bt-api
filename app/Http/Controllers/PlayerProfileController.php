@@ -31,7 +31,7 @@ class PlayerProfileController extends Controller
             ], 404);
         }
 
-        return new PlayerResource($player->load('arenas'));
+        return new PlayerResource($player->load(['arenas.city', 'city']));
     }
 
     /**
@@ -42,7 +42,7 @@ class PlayerProfileController extends Controller
         $player = $request->user()->player;
         $player->update($request->validated());
 
-        return new PlayerResource($player->load(['arenas', 'image']));
+        return new PlayerResource($player->load(['arenas.city', 'image', 'city']));
     }
 
     /**

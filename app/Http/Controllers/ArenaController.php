@@ -26,7 +26,7 @@ class ArenaController extends Controller
      */
     public function index(Request $request)
     {
-        $arenas = $request->user()->arenas;
+        $arenas = $request->user()->arenas()->with(['logo', 'city'])->get();
         return ArenaResource::collection($arenas);
     }
 
@@ -41,11 +41,11 @@ class ArenaController extends Controller
             $query->where('name', 'like', '%' . $request->name . '%');
         }
 
-        if ($request->filled('city')) {
-            $query->where('city', 'like', '%' . $request->city . '%');
+        if ($request->filled('city_id')) {
+            $query->where('city_id', $request->city_id);
         }
 
-        return ArenaResource::collection($query->latest()->get());
+        return ArenaResource::collection($query->with(['logo', 'city'])->latest()->get());
     }
 
     /**
@@ -61,7 +61,7 @@ class ArenaController extends Controller
         }
 
         $arena = $request->user()->arenas()->create($data);
-        return new ArenaResource($arena->load('logo'));
+        return new ArenaResource($arena->load(['logo', 'city']));
     }
 
     /**
@@ -92,7 +92,7 @@ class ArenaController extends Controller
         }
 
         $arena->update($data);
-        return new ArenaResource($arena->load('logo'));
+        return new ArenaResource($arena->load(['logo', 'city']));
     }
 
     /**

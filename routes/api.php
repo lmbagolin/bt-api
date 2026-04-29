@@ -17,6 +17,15 @@ use App\Http\Controllers\LeagueRankingController;
 
 use App\Http\Controllers\ArenaDashboardController;
 use App\Http\Controllers\ArenaPlayerController;
+use App\Http\Controllers\PlayerFriendController;
+use App\Http\Controllers\CityController;
+
+// Cidades (referência pública)
+Route::get('/cities', [CityController::class, 'index']);
+
+// Amizades via token (sem autenticação)
+Route::get('/friends/token/{token}',  [PlayerFriendController::class, 'showByToken']);
+Route::post('/friends/token/{token}', [PlayerFriendController::class, 'acceptByToken']);
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
@@ -27,6 +36,15 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/user', [AuthController::class, 'user']);
     Route::patch('/user/locale', [AuthController::class, 'updateLocale']);
+
+    // Amigos
+    Route::get('/friends',              [PlayerFriendController::class, 'index']);
+    Route::get('/friends/requests',     [PlayerFriendController::class, 'requests']);
+    Route::get('/friends/sent',         [PlayerFriendController::class, 'sent']);
+    Route::post('/friends',             [PlayerFriendController::class, 'store']);
+    Route::post('/friends/{friend}/accept', [PlayerFriendController::class, 'accept']);
+    Route::post('/friends/{friend}/reject', [PlayerFriendController::class, 'reject']);
+    Route::delete('/friends/{friend}',  [PlayerFriendController::class, 'destroy']);
 
     // Player Global Profile
     Route::get('/player/profile', [PlayerProfileController::class, 'show']);
@@ -57,7 +75,8 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Leagues — admin (nested under arenas)
     Route::apiResource('arenas.leagues', LeagueController::class);
-    Route::apiResource('arenas.leagues.stages', LeagueStageController::class)->shallow();
+    Route::apiResource('arenas.leagues.stages', LeagueStageController::class)->shallow()->except('destroy');
+    Route::delete('arenas/{arena}/leagues/{league}/stages/{stage}', [LeagueStageController::class, 'destroy']);
 
     // Admin: CRUD de inscrições da etapa
     Route::prefix('arenas/{arena}/leagues/{league}/stages/{stage}/registrations')

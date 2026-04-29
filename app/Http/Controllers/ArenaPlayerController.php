@@ -33,7 +33,7 @@ class ArenaPlayerController extends Controller
             return response()->json(['message' => 'Acesso negado.'], 403);
         }
 
-        return PlayerResource::collection($arena->players()->latest()->get());
+        return PlayerResource::collection($arena->players()->with('city')->latest()->get());
     }
 
     /**
@@ -165,7 +165,7 @@ class ArenaPlayerController extends Controller
                 'nickname' => $data['nickname'] ?? null,
                 'gender'   => $data['gender'] ?? null,
                 'level'    => $data['level'] ?? null,
-                'city'     => $data['city'] ?? null,
+                'city_id'  => $data['city_id'] ?? null,
             ]
         );
 

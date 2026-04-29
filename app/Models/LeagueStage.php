@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -78,5 +79,27 @@ class LeagueStage extends Model
     public function rankings(): HasMany
     {
         return $this->hasMany(LeagueStageRanking::class, 'league_stage_id')->orderBy('position');
+    }
+
+    public function stageStatus(): Attribute
+    {
+        return Attribute::make(
+            get: function ($value, $attributes) {
+                $dataAbertura = $attributes['data_abertura_inscricoes'] ?? null;
+                $registrationsOpen = is_null($dataAbertura)
+                    || $dataAbertura <= now();
+                $stageStarted = $attributes['data_etapa'] <= now();
+                $openStatus = ['created'];
+
+                if (
+                    $registrationsOpen &&
+                    !$stageStarted &&
+                    in_array($value, $openStatus)
+                ) {
+                    return 'registrations_open';
+                }
+                return $value;
+            },
+        );
     }
 }

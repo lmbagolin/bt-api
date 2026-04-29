@@ -20,7 +20,12 @@ class PlayerResource extends JsonResource
             'nickname'  => $this->nickname,
             'gender'    => $this->gender,
             'level'     => $this->level,
-            'city'      => $this->city,
+            'city_id'   => $this->city_id,
+            'city'      => $this->whenLoaded('city', fn () => [
+                'id'         => $this->city->id,
+                'name'       => $this->city->name,
+                'state_code' => $this->city->state_code,
+            ]),
             'whatsapp'  => $this->whatsapp,
             'instagram' => $this->instagram,
             'image_url' => $this->image?->url,

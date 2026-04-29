@@ -10,10 +10,10 @@ class LeagueStageMatch extends Model
     protected $fillable = [
         'group_id',
         'match_number',
-        'p1_registration_id',
-        'p2_registration_id',
-        'q1_registration_id',
-        'q2_registration_id',
+        'd1_player1_id',
+        'd1_player2_id',
+        'd2_player1_id',
+        'd2_player2_id',
         'score_p',
         'score_q',
     ];
@@ -28,23 +28,23 @@ class LeagueStageMatch extends Model
         return $this->belongsTo(LeagueStageGroup::class, 'group_id');
     }
 
-    public function p1(): BelongsTo
+    public function d1Player1(): BelongsTo
     {
-        return $this->belongsTo(LeagueStageRegistration::class, 'p1_registration_id');
+        return $this->belongsTo(Player::class, 'd1_player1_id');
     }
 
-    public function p2(): BelongsTo
+    public function d1Player2(): BelongsTo
     {
-        return $this->belongsTo(LeagueStageRegistration::class, 'p2_registration_id');
+        return $this->belongsTo(Player::class, 'd1_player2_id');
     }
 
-    public function q1(): BelongsTo
+    public function d2Player1(): BelongsTo
     {
-        return $this->belongsTo(LeagueStageRegistration::class, 'q1_registration_id');
+        return $this->belongsTo(Player::class, 'd2_player1_id');
     }
 
-    public function q2(): BelongsTo
+    public function d2Player2(): BelongsTo
     {
-        return $this->belongsTo(LeagueStageRegistration::class, 'q2_registration_id');
+        return $this->belongsTo(Player::class, 'd2_player2_id');
     }
 }

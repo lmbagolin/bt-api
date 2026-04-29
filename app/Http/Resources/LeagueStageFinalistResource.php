@@ -24,8 +24,10 @@ class LeagueStageFinalistResource extends JsonResource
             'gc'             => $this->gc,
             'saldo_games'    => $this->saldo_games,
             'player'         => $this->whenLoaded('registration', fn () => [
-                'name'  => $this->registration->player?->name,
-                'color' => $color,
+                'name'         => $this->registration->player?->name,
+                'partner_name' => $this->registration->partner?->name
+                    ?? ($this->registration->partner_name ?: null),
+                'color'        => $color,
             ]),
         ];
     }

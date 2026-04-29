@@ -105,10 +105,15 @@ class LeagueStageRankingController extends Controller
         $groupMatches = LeagueStageMatch::whereIn('group_id', $groupIds)
             ->whereNotNull('score_p')->whereNotNull('score_q')->get();
 
+        // player_id → registration_id for this stage
+        $playerToRegId = $stage->registrations()->pluck('id', 'player_id');
+
         $stats = [];
         foreach ($groupMatches as $m) {
             $pWon = $m->score_p > $m->score_q;
-            foreach ([$m->p1_registration_id, $m->p2_registration_id] as $regId) {
+            foreach ([$m->d1_player1_id, $m->d1_player2_id] as $playerId) {
+                if (!$playerId) continue;
+                $regId = $playerToRegId[$playerId] ?? null;
                 if (!$regId) continue;
                 $stats[$regId] ??= ['wins' => 0, 'matches' => 0, 'gp' => 0, 'gc' => 0];
                 $stats[$regId]['matches']++;
@@ -116,7 +121,9 @@ class LeagueStageRankingController extends Controller
                 $stats[$regId]['gc'] += $m->score_q;
                 if ($pWon) $stats[$regId]['wins']++;
             }
-            foreach ([$m->q1_registration_id, $m->q2_registration_id] as $regId) {
+            foreach ([$m->d2_player1_id, $m->d2_player2_id] as $playerId) {
+                if (!$playerId) continue;
+                $regId = $playerToRegId[$playerId] ?? null;
                 if (!$regId) continue;
                 $stats[$regId] ??= ['wins' => 0, 'matches' => 0, 'gp' => 0, 'gc' => 0];
                 $stats[$regId]['matches']++;

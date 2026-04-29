@@ -17,7 +17,7 @@ class League extends Model
         'descricao',
         'premiacao',
         'nivel',
-        'genero',
+        'gender',
     ];
 
     protected $casts = [
