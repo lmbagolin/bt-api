@@ -16,11 +16,13 @@ class CountrySeeder extends Seeder
         fgetcsv($file);
 
         while (($row = fgetcsv($file)) !== false) {
+            if (count($row) < 3) continue;
+
             $iso3 = trim($row[0]);
             $iso2 = trim($row[1]) ?: null;
             $name = trim($row[2]);
 
-            if (! $iso3 || ! $name) {
+            if (! $iso3 || ! $name || $iso3 === 'ISO-3') {
                 continue;
             }
 

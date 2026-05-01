@@ -25,7 +25,10 @@ class StateSeeder extends Seeder
 
             State::updateOrCreate(
                 ['code' => $code],
-                ['name' => $name]
+                [
+                    'name' => $name,
+                    'country_iso3' => 'BRA'
+                ]
             );
         }
 
