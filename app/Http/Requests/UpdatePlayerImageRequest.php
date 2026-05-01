@@ -11,7 +11,7 @@ class UpdatePlayerImageRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return $this->user()->player !== null;
+        return true;
     }
 
     /**

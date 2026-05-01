@@ -21,15 +21,12 @@ class PlayerProfileController extends Controller
     /**
      * Display the authenticated user's player profile.
      */
-    public function show(Request $request): PlayerResource|JsonResponse
+    public function show(Request $request): PlayerResource
     {
-        $player = $request->user()->player;
-
-        if (!$player) {
-            return response()->json([
-                'message' => 'Perfil de jogador não encontrado.'
-            ], 404);
-        }
+        $player = $request->user()->player()->firstOrCreate(
+            ['user_id' => $request->user()->id],
+            ['name' => $request->user()->name]
+        );
 
         return new PlayerResource($player->load(['arenas.city', 'city']));
     }
@@ -39,8 +36,10 @@ class PlayerProfileController extends Controller
      */
     public function update(UpdateMyPlayerRequest $request): PlayerResource
     {
-        $player = $request->user()->player;
-        $player->update($request->validated());
+        $player = $request->user()->player()->updateOrCreate(
+            ['user_id' => $request->user()->id],
+            $request->validated()
+        );
 
         return new PlayerResource($player->load(['arenas.city', 'image', 'city']));
     }
@@ -50,7 +49,10 @@ class PlayerProfileController extends Controller
      */
     public function updateImage(UpdatePlayerImageRequest $request): PlayerResource
     {
-        $player = $request->user()->player;
+        $player = $request->user()->player()->firstOrCreate(
+            ['user_id' => $request->user()->id],
+            ['name' => $request->user()->name]
+        );
 
         if ($player->image_id) {
             $this->fileService->delete($player->image);
