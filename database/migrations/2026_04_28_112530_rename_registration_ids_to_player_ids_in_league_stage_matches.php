@@ -9,10 +9,7 @@ return new class extends Migration
 {
     public function up(): void
     {
-        // Columns were already renamed by a partial prior run; only ensure
-        // they are nullable and carry the correct FK to players.
         Schema::table('league_stage_matches', function (Blueprint $table) {
-            // Drop leftover indexes with old naming (harmless if already gone)
             foreach ([
                 'league_stage_matches_p1_registration_id_foreign',
                 'league_stage_matches_p2_registration_id_foreign',
@@ -26,6 +23,17 @@ return new class extends Migration
                 }
             }
 
+            // Rename if columns still have old names (fresh database)
+            $columns = Schema::getColumnListing('league_stage_matches');
+            if (in_array('p1_registration_id', $columns)) {
+                $table->renameColumn('p1_registration_id', 'd1_player1_id');
+                $table->renameColumn('p2_registration_id', 'd1_player2_id');
+                $table->renameColumn('q1_registration_id', 'd2_player1_id');
+                $table->renameColumn('q2_registration_id', 'd2_player2_id');
+            }
+        });
+
+        Schema::table('league_stage_matches', function (Blueprint $table) {
             $table->unsignedBigInteger('d1_player1_id')->nullable()->change();
             $table->unsignedBigInteger('d1_player2_id')->nullable()->change();
             $table->unsignedBigInteger('d2_player1_id')->nullable()->change();
