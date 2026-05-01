@@ -27,6 +27,8 @@ class StorePlayerRequest extends FormRequest
             'gender'   => ['nullable', 'string', 'in:male,female,other'],
             'level'    => ['nullable', 'string', 'max:100'],
             'city_id'  => ['nullable', 'exists:cities,id'],
+            'arena_id' => ['nullable', 'exists:arenas,id'],
+            'nationality' => ['nullable', 'string', 'exists:countries,iso3'],
             'whatsapp' => ['nullable', 'string', 'max:20'],
             'instagram' => ['nullable', 'string', 'max:255'],
             'image' => [

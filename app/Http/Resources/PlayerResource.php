@@ -21,6 +21,8 @@ class PlayerResource extends JsonResource
             'gender'    => $this->gender,
             'level'     => $this->level,
             'city_id'   => $this->city_id,
+            'nationality' => $this->nationality,
+            'arena_id'  => $this->arena_id,
             'city'      => $this->whenLoaded('city', fn () => [
                 'id'         => $this->city->id,
                 'name'       => $this->city->name,

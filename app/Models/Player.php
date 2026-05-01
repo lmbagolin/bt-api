@@ -20,11 +20,17 @@ class Player extends Model
         'level',
         'city_id',
         'nationality',
+        'arena_id',
         'whatsapp',
         'instagram',
         'user_id',
         'image_id',
     ];
+
+    public function arena(): BelongsTo
+    {
+        return $this->belongsTo(Arena::class, 'arena_id');
+    }
 
     public function city(): BelongsTo
     {

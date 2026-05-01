@@ -26,7 +26,9 @@ class RegisterArenaPlayerRequest extends FormRequest
             'nickname' => 'nullable|string|max:255',
             'gender'   => 'nullable|string|in:male,female,other',
             'level'    => 'nullable|string|max:100',
-            'city'     => 'nullable|string|max:255',
+            'city_id'  => 'nullable|integer|exists:cities,id',
+            'arena_id' => 'nullable|integer|exists:arenas,id',
+            'nationality' => 'nullable|string|exists:countries,iso3',
         ];
     }
 }

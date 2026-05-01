@@ -46,6 +46,7 @@ class ArenaPlayerController extends Controller
         }
 
         $data = $request->validated();
+        $data['arena_id'] = $arena->id;
 
         if ($request->hasFile('image')) {
             $file = $this->fileService->upload($request->file('image'), 'player');
@@ -64,6 +65,39 @@ class ArenaPlayerController extends Controller
         $arena->players()->syncWithoutDetaching([$player->id]);
 
         return new PlayerResource($player);
+    }
+
+    public function storeBatch(Request $request, Arena $arena): JsonResponse
+    {
+        if ($arena->owner_id !== auth()->id()) {
+            return response()->json(['message' => 'Acesso negado.'], 403);
+        }
+
+        $request->validate([
+            'players' => ['required', 'array', 'min:1'],
+            'players.*.name' => ['required', 'string', 'max:255'],
+            'players.*.nickname' => ['nullable', 'string', 'max:255'],
+            'players.*.gender' => ['nullable', 'string', 'in:male,female,other'],
+            'players.*.level' => ['nullable', 'string', 'max:100'],
+            'players.*.nationality' => ['nullable', 'string', 'exists:countries,iso3'],
+            'players.*.city_id' => ['nullable', 'integer', 'exists:cities,id'],
+            'players.*.whatsapp' => ['nullable', 'string', 'max:20'],
+            'players.*.instagram' => ['nullable', 'string', 'max:255'],
+        ]);
+
+        $playersData = $request->input('players');
+        $createdCount = 0;
+
+        foreach ($playersData as $data) {
+            $data['arena_id'] = $arena->id;
+            $player = Player::create($data);
+            $arena->players()->syncWithoutDetaching([$player->id]);
+            $createdCount++;
+        }
+
+        return response()->json([
+            'message' => "{$createdCount} jogadores cadastrados com sucesso.",
+        ]);
     }
 
     /**

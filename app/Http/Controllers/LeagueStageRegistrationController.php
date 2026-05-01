@@ -152,6 +152,7 @@ class LeagueStageRegistrationController extends Controller
                     'gender'   => $request->gender,
                     'level'    => $request->level,
                     'whatsapp' => $request->whatsapp,
+                    'arena_id' => $arena->id,
                 ], fn ($v) => !is_null($v)));
                 $arena->players()->syncWithoutDetaching([$player->id]);
             }
@@ -196,6 +197,46 @@ class LeagueStageRegistrationController extends Controller
         $registration->load(['player', 'partner']);
 
         return new LeagueStageRegistrationResource($registration);
+    }
+
+    public function storeBatch(Request $request, Arena $arena, League $league, LeagueStage $stage): JsonResponse
+    {
+        $this->authorizeStage($arena, $league, $stage);
+
+        $request->validate([
+            'player_ids' => ['required', 'array'],
+            'player_ids.*' => ['exists:players,id'],
+            'status' => ['nullable', Rule::in(['pending', 'confirmed', 'waitlist', 'cancelled'])],
+        ]);
+
+        $status = $request->status ?? $this->resolveStatus($stage);
+        $addedCount = 0;
+        $errors = [];
+
+        foreach ($request->player_ids as $playerId) {
+            $player = Player::find($playerId);
+
+            if (!$this->isGenderAllowed($league->gender, $player->gender)) {
+                $errors[] = "Jogador {$player->name} possui gênero incompatível com a liga.";
+                continue;
+            }
+
+            if ($stage->registrations()->where('player_id', $playerId)->exists()) {
+                continue;
+            }
+
+            $stage->registrations()->create([
+                'player_id' => $playerId,
+                'status' => $status,
+                'valor_pago' => $stage->valor_inscricao,
+            ]);
+            $addedCount++;
+        }
+
+        return response()->json([
+            'message' => "{$addedCount} jogadores adicionados com sucesso.",
+            'errors' => $errors,
+        ]);
     }
 
     // -------------------------------------------------------------------------

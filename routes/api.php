@@ -19,9 +19,11 @@ use App\Http\Controllers\ArenaDashboardController;
 use App\Http\Controllers\ArenaPlayerController;
 use App\Http\Controllers\PlayerFriendController;
 use App\Http\Controllers\CityController;
+use App\Http\Controllers\CountryController;
 
 // Cidades (referência pública)
 Route::get('/cities', [CityController::class, 'index']);
+Route::get('/countries', [CountryController::class, 'index']);
 
 // Amizades via token (sem autenticação)
 Route::get('/friends/token/{token}',  [PlayerFriendController::class, 'showByToken']);
@@ -91,6 +93,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('arenas/{arena}/my-player', [ArenaPlayerController::class, 'updateMyPlayer']);
     Route::get('my-registrations', [ArenaPlayerController::class, 'myRegistrations']);
 
+    Route::post('arenas/{arena}/players/batch', [ArenaPlayerController::class, 'storeBatch']);
     // Admin Player Management
     Route::apiResource('arenas.players', ArenaPlayerController::class)->only(['index', 'store', 'update', 'destroy']);
 
@@ -116,6 +119,7 @@ Route::middleware('auth:sanctum')->group(function () {
         ->group(function () {
             Route::get('/',                        'index');
             Route::post('/',                       'store');
+            Route::post('/batch',                  'storeBatch');
             Route::put('/{registration}',          'update');
             Route::patch('/{registration}/status', 'updateStatus');
             Route::delete('/{registration}',       'destroy');
