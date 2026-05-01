@@ -19,6 +19,12 @@ class File extends Model
 
     public function getUrlAttribute()
     {
-        return Storage::disk($this->disk)->temporaryUrl($this->path, now()->addMinutes(60));
+        $disk = Storage::disk($this->disk);
+
+        if (method_exists($disk->getAdapter(), 'getClient')) {
+            return $disk->temporaryUrl($this->path, now()->addMinutes(60));
+        }
+
+        return $disk->url($this->path);
     }
 }

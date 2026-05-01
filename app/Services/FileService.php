@@ -17,8 +17,9 @@ class FileService
      * @param string $disk
      * @return File
      */
-    public function upload(UploadedFile $file, string $folder, string $disk = 's3'): File
+    public function upload(UploadedFile $file, string $folder, ?string $disk = null): File
     {
+        $disk = $disk ?? config('filesystems.default');
         $filename = Str::uuid() . '.' . $file->extension();
         $path = Storage::disk($disk)->putFileAs($folder, $file, $filename);
 
